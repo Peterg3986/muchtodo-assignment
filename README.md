@@ -1,44 +1,68 @@
-# MuchToDo
+# MuchToDo Backend
 
-MuchToDo is a task management backend service built in **Go**.  
-It provides a REST API to manage users and todos, with data stored in **MongoDB**. The application is containerized using **Docker** for easy deployment.
-
----
-
-## Table of Contents
-
-- [Features](#features)  
-- [Requirements](#requirements)  
-- [Setup & Installation](#setup--installation)  
-- [Running with Docker](#running-with-docker)  
-- [Environment Variables](#environment-variables)  
-- [API Endpoints](#api-endpoints)  
-- [License](#license)  
+MuchToDo is a backend service built with **Go** that allows users to manage tasks efficiently.  
+It provides REST APIs for creating, reading, updating, and deleting tasks, as well as managing user authentication.  
+The application uses **MongoDB** for data storage and is fully containerized with **Docker** for easy deployment.
 
 ---
 
 ## Features
 
-- User registration and authentication (JWT-based)  
-- CRUD operations for todos  
-- MongoDB as the backend database  
-- Fully containerized with Docker  
-- Swagger documentation available  
+- User authentication with JWT tokens  
+- Task management (CRUD operations)  
+- MongoDB as a backend database  
+- Dockerized for local development and testing  
 
 ---
 
 ## Requirements
 
-- [Go](https://golang.org/) >= 1.25  
-- [Docker](https://www.docker.com/)  
-- [MongoDB](https://www.mongodb.com/) (optional if using Docker)  
+- Go >= 1.25  
+- Docker  
+- MongoDB (optional if using Docker container)  
 
 ---
 
-## Setup & Installation
+## Installation & Setup
 
-1. Clone the repository:
+1. Clone this repository:
 
 ```bash
-git clone https://github.com/Innocent9712/much-to-do.git
-cd much-to-do/Server/MuchToDo
+git clone <YOUR_REPO_URL>
+cd muchtodo-backend
+Install Go dependencies:
+
+go mod tidy
+
+
+(Optional) Build the application locally:
+
+GOOS=linux GOARCH=amd64 go build -o muchtodo ./cmd/api
+
+Running with Docker
+
+Create a Docker network:
+
+docker network create muchtodo-net
+
+
+Run MongoDB container:
+
+docker run -d \
+  --name muchtodo-mongo \
+  --network muchtodo-net \
+  -p 27017:27017 \
+  -e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=admin123 \
+  mongo:6
+
+
+Run the backend container:
+
+docker run -p 8080:8080 \
+  --network muchtodo-net \
+  -e MONGO_URI="mongodb://admin:admin123@muchtodo-mongo:27017/muchtodo?authSource=admin" \
+  muchtodo
+
+
+The backend will be available at: http://localhost:8080
